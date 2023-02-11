@@ -13,5 +13,6 @@ module.exports = {
     'react-native/no-single-element-style-arrays': 2,
     'react-native/no-color-literals': 2,
     'react/sort-comp': 2,
+    'no-console': 2,
   },
 };
