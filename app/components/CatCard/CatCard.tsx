@@ -4,15 +4,16 @@ import { Spacer } from '../Spacer/Spacer';
 interface CardProps {
   imageUrl: string;
   containerStyle?: ViewStyle;
+  onPress: () => void;
 }
 
-export const CatCard = ({ imageUrl, containerStyle }: CardProps) => {
+export const CatCard = ({ imageUrl, containerStyle, onPress }: CardProps) => {
   return (
     <View style={[containerStyle, styles.container]}>
       <Spacer height={64} />
       <Image source={{ uri: imageUrl }} style={styles.image} />
       <Spacer height={32} />
-      <Button title={'Dislike'} />
+      <Button title={'Dislike'} onPress={onPress} />
     </View>
   );
 };
