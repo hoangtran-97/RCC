@@ -1,11 +1,72 @@
-import { SafeAreaView, StyleSheet, Text } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, Text, Button } from 'react-native';
 import { HorizontalCatList } from '../../components/HorizontalCatList/HorizontalCatList';
+import {
+  FakeCat,
+  generateFakeCatArray,
+} from '../../Utils/CatGenerator/CatGenerator';
 
 export const HomeView = () => {
+  const [catData, setCatData] = useState<FakeCat[]>([]);
+
+  useEffect(() => {
+    getCatData();
+  }, []);
+  const getCatData = async () => {
+    const catList = generateFakeCatArray();
+    const catBlackList = await getBlackListCatData();
+    const filteredList = catList.filter(cat => !catBlackList.includes(cat.id));
+    setCatData(filteredList);
+  };
+
+  const getBlackListCatData = async () => {
+    try {
+      const storageData = await AsyncStorage.getItem('catBlackList');
+      if (storageData != null) {
+        return JSON.parse(storageData);
+      }
+      return [];
+    } catch (error) {
+      //silent catch
+    }
+  };
+
+  const blackListCat = async (catId: string) => {
+    try {
+      const currentBlackListJSON = await AsyncStorage.getItem('catBlackList');
+      if (currentBlackListJSON != null) {
+        const currentBlackList = JSON.parse(currentBlackListJSON);
+        const newBlackList = [...currentBlackList];
+        newBlackList.push(catId);
+        const newBlackListSet = [...new Set(newBlackList)];
+
+        await AsyncStorage.setItem(
+          'catBlackList',
+          JSON.stringify(newBlackListSet),
+        );
+      } else {
+        await AsyncStorage.setItem('catBlackList', JSON.stringify([catId]));
+      }
+      getCatData();
+    } catch (e) {
+      // saving error
+    }
+  };
+  const clearAsyncStorage = async () => {
+    await AsyncStorage.clear();
+    getCatData();
+  };
+
+  const onCardPress = (id: string) => {
+    blackListCat(id);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Please Rescue the cats!</Text>
-      <HorizontalCatList />
+      <HorizontalCatList data={catData} onCardPress={onCardPress} />
+      <Button title="Clear dislike data" onPress={clearAsyncStorage} />
     </SafeAreaView>
   );
 };

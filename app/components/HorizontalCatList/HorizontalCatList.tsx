@@ -5,21 +5,27 @@ import {
   Platform,
   StyleSheet,
 } from 'react-native';
-import {
-  generateFakeCatArray,
-  FakeCat,
-} from '../../Utils/CatGenerator/CatGenerator';
+import { FakeCat } from '../../Utils/CatGenerator/CatGenerator';
 import { CatCard } from '../CatCard/CatCard';
 
 const deviceWidth = Dimensions.get('window').width;
 const cardMargin = 12;
 const cardInset = 12;
 const cardWidth = deviceWidth - cardMargin * 2 - cardInset * 4;
-export const HorizontalCatList = () => {
-  const data = generateFakeCatArray();
+
+interface HorizontalCatListProps {
+  data: FakeCat[];
+  onCardPress: (id: string) => void;
+}
+
+export const HorizontalCatList = ({
+  data,
+  onCardPress,
+}: HorizontalCatListProps) => {
   const renderItem: ListRenderItem<FakeCat> = ({ item }) => {
     return (
       <CatCard
+        onPress={() => onCardPress(item.id)}
         key={item.id}
         imageUrl={item.imageUrl}
         containerStyle={{
