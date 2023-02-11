@@ -1,6 +1,6 @@
 export interface FakeCat {
   imageUrl: string;
-  id: number;
+  id: string;
 }
 
 export const generateFakeCatArray = (numberOfCats = 17, resolution = 800) => {
@@ -9,7 +9,7 @@ export const generateFakeCatArray = (numberOfCats = 17, resolution = 800) => {
   for (let i = 1; i < numberOfCats; i++) {
     catArray.push({
       imageUrl: `https://placekitten.com/${resolution}/${resolution}?image=${i}`,
-      id: i,
+      id: `${i}`,
     });
   }
   return catArray;
