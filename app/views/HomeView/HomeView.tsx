@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -25,14 +25,13 @@ const ASYNC_STORAGE_LOCAL_CAT_LIST = 'localCatList';
 
 export const HomeView = () => {
   const [catData, setCatData] = useState<FakeCat[]>([]);
-
   const openImagePicker = () => {
     ImagePicker.openPicker({
       width: 800,
       height: 800,
       cropping: true,
     }).then(image => {
-      setLocalCatListData({ id: uuidv4(), imageUrl: image.path });
+      setLocalCatListData(image.path);
     });
   };
 
@@ -62,15 +61,16 @@ export const HomeView = () => {
     }
   };
 
-  const setLocalCatListData = async (cat: FakeCat) => {
+  const setLocalCatListData = async (path: string) => {
     try {
       const currentListJSON = await AsyncStorage.getItem(
         ASYNC_STORAGE_LOCAL_CAT_LIST,
       );
+      const newCat: FakeCat = { id: uuidv4(), imageUrl: path };
       if (currentListJSON != null) {
         const currentList = JSON.parse(currentListJSON);
         const newList = [...currentList];
-        newList.push(cat);
+        newList.push(newCat);
         const newListSet = [...new Set(newList)];
 
         await AsyncStorage.setItem(
@@ -80,7 +80,7 @@ export const HomeView = () => {
       } else {
         await AsyncStorage.setItem(
           ASYNC_STORAGE_LOCAL_CAT_LIST,
-          JSON.stringify([cat]),
+          JSON.stringify([newCat]),
         );
       }
       getCatData();
