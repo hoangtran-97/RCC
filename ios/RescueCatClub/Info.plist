@@ -4,6 +4,10 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>RescueCat need to use your library</string>
+    <key>NSCameraUsageDescription</key>
+    <string>RescueCat need to use your camera</string>
 	<key>CFBundleDisplayName</key>
 	<string>RescueCatClub</string>
 	<key>CFBundleExecutable</key>

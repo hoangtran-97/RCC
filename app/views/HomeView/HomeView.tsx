@@ -1,7 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Button,
+} from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
 import Toast from 'react-native-toast-message';
+
+import { v4 as uuidv4 } from 'uuid';
 import { HorizontalCatList } from '../../components/HorizontalCatList/HorizontalCatList';
 import { colors } from '../../Constants/Colors';
 import {
@@ -11,12 +20,31 @@ import {
 
 export const HomeView = () => {
   const [catData, setCatData] = useState<FakeCat[]>([]);
+  const [localCatList, setLocalCatList] = useState<FakeCat[]>([]);
+
+  const openImagePicker = () => {
+    ImagePicker.openPicker({
+      width: 800,
+      height: 800,
+      cropping: true,
+    }).then(image => {
+      setLocalCatList([
+        ...localCatList,
+        { id: uuidv4(), imageUrl: image.path },
+      ]);
+    });
+  };
+
+  useEffect(() => {
+    getCatData();
+  }, [localCatList]);
 
   useEffect(() => {
     getCatData();
   }, []);
   const getCatData = async () => {
-    const catList = generateFakeCatArray();
+    const fakeCatList = generateFakeCatArray();
+    const catList = [...fakeCatList, ...localCatList];
     const catBlackList = await getBlackListCatData();
     const filteredList = catList.filter(cat => !catBlackList.includes(cat.id));
     setCatData(filteredList);
@@ -93,7 +121,7 @@ export const HomeView = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Please Rescue the cats!</Text>
+      <Text style={styles.title}>Rescue Cat Club</Text>
       <HorizontalCatList data={catData} onCardPress={onCardPress} />
       <TouchableOpacity
         onPress={clearAsyncStorage}
@@ -101,6 +129,7 @@ export const HomeView = () => {
         style={styles.button}>
         <Text style={styles.buttonText}>Clear dislike data</Text>
       </TouchableOpacity>
+      <Button title={'select image'} onPress={openImagePicker} />
     </SafeAreaView>
   );
 };

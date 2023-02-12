@@ -55,5 +55,7 @@ TODO:
 - [x] Undo dislike within 5s
 - [X] Reset dislike functionality
 - [ ] Add custom image component
+- [ ] Test image picker on physical iOS device
+- [ ] Test image picker on physical Android device
 - [ ] Improve UI
 - [ ] Add animation
