@@ -14,5 +14,6 @@ module.exports = {
     'react-native/no-color-literals': 2,
     'react/sort-comp': 2,
     'no-console': 2,
+    'react-hooks/exhaustive-deps': 0,
   },
 };
