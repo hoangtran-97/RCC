@@ -41,7 +41,7 @@ Requirements
 - [x] Fetch images from API
 - [x] UI for viewing image
 - [x] Mark dislike
-- [ ] Undo dislike within 5 seconds
+- [x] Undo dislike within 5 seconds
 - [x] Reset preference for cats
 - [ ] Add custom cat to library
 
@@ -52,6 +52,8 @@ TODO:
 - [x] Update readme
 - [X] Image List component
 - [X] dislike marking component
-- [ ] Undo dislike within 5s
+- [x] Undo dislike within 5s
 - [X] Reset dislike functionality
 - [ ] Add custom image component
+- [ ] Improve UI
+- [ ] Add animation
