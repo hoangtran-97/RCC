@@ -5,13 +5,15 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  Button,
+  View,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import Toast from 'react-native-toast-message';
+import Icon from 'react-native-vector-icons/Feather';
 
 import { v4 as uuidv4 } from 'uuid';
 import { HorizontalCatList } from '../../components/HorizontalCatList/HorizontalCatList';
+import { Spacer } from '../../components/Spacer/Spacer';
 import { colors } from '../../Constants/Colors';
 import {
   FakeCat,
@@ -169,13 +171,26 @@ export const HomeView = () => {
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Rescue Cat Club</Text>
       <HorizontalCatList data={catData} onCardPress={onCardPress} />
-      <TouchableOpacity
-        onPress={clearAsyncStorage}
-        activeOpacity={0.8}
-        style={styles.button}>
-        <Text style={styles.buttonText}>Clear dislike data</Text>
-      </TouchableOpacity>
-      <Button title={'select image'} onPress={openImagePicker} />
+      <View style={styles.bottomRow}>
+        <TouchableOpacity
+          onPress={openImagePicker}
+          activeOpacity={0.8}
+          style={styles.button}>
+          <Icon name={'plus-circle'} size={32} color={colors.keppelGreen} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={clearAsyncStorage}
+          activeOpacity={0.8}
+          style={styles.clearButton}>
+          <Icon
+            name={'refresh-cw'}
+            size={32}
+            color={colors.engineeringOrange}
+          />
+          <Spacer width={8} />
+          <Text style={styles.buttonText}>Clear dislike data</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -195,5 +210,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: colors.engineeringOrange,
+  },
+  clearButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
 });
