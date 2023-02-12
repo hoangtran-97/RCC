@@ -1,10 +1,4 @@
-import {
-  FlatList,
-  ListRenderItem,
-  Dimensions,
-  Platform,
-  StyleSheet,
-} from 'react-native';
+import { FlatList, ListRenderItem, Dimensions } from 'react-native';
 import { FakeCat } from '../../Utils/CatGenerator/CatGenerator';
 import { CatCard } from '../CatCard/CatCard';
 
@@ -56,13 +50,6 @@ export const HorizontalCatList = ({
         right: cardInset, // Right spacing for the very last card
       }}
       contentOffset={{ x: -cardInset, y: 0 }}
-      contentContainerStyle={styles.contentContainerStyle}
     />
   );
 };
-
-const styles = StyleSheet.create({
-  contentContainerStyle: {
-    marginHorizontal: Platform.OS === 'android' ? 12 : 0,
-  },
-});
