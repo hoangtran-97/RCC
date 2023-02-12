@@ -59,3 +59,9 @@ TODO:
 - [ ] Test image picker on physical Android device //no physical device to test
 - [ ] Improve UI
 - [ ] Add animation
+
+## Known issues
+
+- The app is ugly
+- When adding a new image, it will appear at the end of the list
+- When adding a new image, sometimes the uuid generator will silently fail and wont add your image to the list

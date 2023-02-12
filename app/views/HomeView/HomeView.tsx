@@ -1,17 +1,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  Button,
+  View,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import Toast from 'react-native-toast-message';
+import Icon from 'react-native-vector-icons/Feather';
 
 import { v4 as uuidv4 } from 'uuid';
 import { HorizontalCatList } from '../../components/HorizontalCatList/HorizontalCatList';
+import { Spacer } from '../../components/Spacer/Spacer';
 import { colors } from '../../Constants/Colors';
 import {
   FakeCat,
@@ -23,14 +25,13 @@ const ASYNC_STORAGE_LOCAL_CAT_LIST = 'localCatList';
 
 export const HomeView = () => {
   const [catData, setCatData] = useState<FakeCat[]>([]);
-
   const openImagePicker = () => {
     ImagePicker.openPicker({
       width: 800,
       height: 800,
       cropping: true,
     }).then(image => {
-      setLocalCatListData({ id: uuidv4(), imageUrl: image.path });
+      setLocalCatListData(image.path);
     });
   };
 
@@ -60,15 +61,16 @@ export const HomeView = () => {
     }
   };
 
-  const setLocalCatListData = async (cat: FakeCat) => {
+  const setLocalCatListData = async (path: string) => {
     try {
       const currentListJSON = await AsyncStorage.getItem(
         ASYNC_STORAGE_LOCAL_CAT_LIST,
       );
+      const newCat: FakeCat = { id: uuidv4(), imageUrl: path };
       if (currentListJSON != null) {
         const currentList = JSON.parse(currentListJSON);
         const newList = [...currentList];
-        newList.push(cat);
+        newList.push(newCat);
         const newListSet = [...new Set(newList)];
 
         await AsyncStorage.setItem(
@@ -78,7 +80,7 @@ export const HomeView = () => {
       } else {
         await AsyncStorage.setItem(
           ASYNC_STORAGE_LOCAL_CAT_LIST,
-          JSON.stringify([cat]),
+          JSON.stringify([newCat]),
         );
       }
       getCatData();
@@ -169,13 +171,26 @@ export const HomeView = () => {
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Rescue Cat Club</Text>
       <HorizontalCatList data={catData} onCardPress={onCardPress} />
-      <TouchableOpacity
-        onPress={clearAsyncStorage}
-        activeOpacity={0.8}
-        style={styles.button}>
-        <Text style={styles.buttonText}>Clear dislike data</Text>
-      </TouchableOpacity>
-      <Button title={'select image'} onPress={openImagePicker} />
+      <View style={styles.bottomRow}>
+        <TouchableOpacity
+          onPress={openImagePicker}
+          activeOpacity={0.8}
+          style={styles.button}>
+          <Icon name={'plus-circle'} size={32} color={colors.keppelGreen} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={clearAsyncStorage}
+          activeOpacity={0.8}
+          style={styles.clearButton}>
+          <Icon
+            name={'refresh-cw'}
+            size={32}
+            color={colors.engineeringOrange}
+          />
+          <Spacer width={8} />
+          <Text style={styles.buttonText}>Clear dislike data</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -195,5 +210,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: colors.engineeringOrange,
+  },
+  clearButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
 });
