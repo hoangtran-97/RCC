@@ -18,9 +18,11 @@ import {
   generateFakeCatArray,
 } from '../../Utils/CatGenerator/CatGenerator';
 
+const ASYNC_STORAGE_CAT_BLACK_LIST = 'catBlackList';
+const ASYNC_STORAGE_LOCAL_CAT_LIST = 'localCatList';
+
 export const HomeView = () => {
   const [catData, setCatData] = useState<FakeCat[]>([]);
-  const [localCatList, setLocalCatList] = useState<FakeCat[]>([]);
 
   const openImagePicker = () => {
     ImagePicker.openPicker({
@@ -28,31 +30,68 @@ export const HomeView = () => {
       height: 800,
       cropping: true,
     }).then(image => {
-      setLocalCatList([
-        ...localCatList,
-        { id: uuidv4(), imageUrl: image.path },
-      ]);
+      setLocalCatListData({ id: uuidv4(), imageUrl: image.path });
     });
   };
-
-  useEffect(() => {
-    getCatData();
-  }, [localCatList]);
 
   useEffect(() => {
     getCatData();
   }, []);
   const getCatData = async () => {
     const fakeCatList = generateFakeCatArray();
+    const localCatList = await getLocalCatListData();
     const catList = [...fakeCatList, ...localCatList];
     const catBlackList = await getBlackListCatData();
     const filteredList = catList.filter(cat => !catBlackList.includes(cat.id));
     setCatData(filteredList);
   };
 
+  const getLocalCatListData = async () => {
+    try {
+      const storageData = await AsyncStorage.getItem(
+        ASYNC_STORAGE_LOCAL_CAT_LIST,
+      );
+      if (storageData != null) {
+        return JSON.parse(storageData);
+      }
+      return [];
+    } catch (error) {
+      //silent catch
+    }
+  };
+
+  const setLocalCatListData = async (cat: FakeCat) => {
+    try {
+      const currentListJSON = await AsyncStorage.getItem(
+        ASYNC_STORAGE_LOCAL_CAT_LIST,
+      );
+      if (currentListJSON != null) {
+        const currentList = JSON.parse(currentListJSON);
+        const newList = [...currentList];
+        newList.push(cat);
+        const newListSet = [...new Set(newList)];
+
+        await AsyncStorage.setItem(
+          ASYNC_STORAGE_LOCAL_CAT_LIST,
+          JSON.stringify(newListSet),
+        );
+      } else {
+        await AsyncStorage.setItem(
+          ASYNC_STORAGE_LOCAL_CAT_LIST,
+          JSON.stringify([cat]),
+        );
+      }
+      getCatData();
+    } catch (e) {
+      // saving error
+    }
+  };
+
   const getBlackListCatData = async () => {
     try {
-      const storageData = await AsyncStorage.getItem('catBlackList');
+      const storageData = await AsyncStorage.getItem(
+        ASYNC_STORAGE_CAT_BLACK_LIST,
+      );
       if (storageData != null) {
         return JSON.parse(storageData);
       }
@@ -64,7 +103,9 @@ export const HomeView = () => {
   const removeCatFromBlackList = async (catId: string) => {
     Toast.hide();
     try {
-      const currentBlackListJSON = await AsyncStorage.getItem('catBlackList');
+      const currentBlackListJSON = await AsyncStorage.getItem(
+        ASYNC_STORAGE_CAT_BLACK_LIST,
+      );
       if (currentBlackListJSON != null) {
         const currentBlackList = JSON.parse(currentBlackListJSON);
         const newBlackList = currentBlackList.filter((item: string) => {
@@ -72,7 +113,7 @@ export const HomeView = () => {
         });
         const newBlackListSet = [...new Set(newBlackList)];
         await AsyncStorage.setItem(
-          'catBlackList',
+          ASYNC_STORAGE_CAT_BLACK_LIST,
           JSON.stringify(newBlackListSet),
         );
       }
@@ -83,7 +124,9 @@ export const HomeView = () => {
   };
   const blackListCat = async (catId: string) => {
     try {
-      const currentBlackListJSON = await AsyncStorage.getItem('catBlackList');
+      const currentBlackListJSON = await AsyncStorage.getItem(
+        ASYNC_STORAGE_CAT_BLACK_LIST,
+      );
       if (currentBlackListJSON != null) {
         const currentBlackList = JSON.parse(currentBlackListJSON);
         const newBlackList = [...currentBlackList];
@@ -91,11 +134,14 @@ export const HomeView = () => {
         const newBlackListSet = [...new Set(newBlackList)];
 
         await AsyncStorage.setItem(
-          'catBlackList',
+          ASYNC_STORAGE_CAT_BLACK_LIST,
           JSON.stringify(newBlackListSet),
         );
       } else {
-        await AsyncStorage.setItem('catBlackList', JSON.stringify([catId]));
+        await AsyncStorage.setItem(
+          ASYNC_STORAGE_CAT_BLACK_LIST,
+          JSON.stringify([catId]),
+        );
       }
       getCatData();
     } catch (e) {
@@ -111,7 +157,7 @@ export const HomeView = () => {
     });
   };
   const clearAsyncStorage = async () => {
-    await AsyncStorage.clear();
+    await AsyncStorage.removeItem(ASYNC_STORAGE_CAT_BLACK_LIST);
     getCatData();
   };
 
