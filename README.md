@@ -43,7 +43,7 @@ Requirements
 - [x] Mark dislike
 - [x] Undo dislike within 5 seconds
 - [x] Reset preference for cats
-- [ ] Add custom cat to library
+- [x] Add custom cat to library
 
 TODO:
 
@@ -54,6 +54,8 @@ TODO:
 - [X] dislike marking component
 - [x] Undo dislike within 5s
 - [X] Reset dislike functionality
-- [ ] Add custom image component
+- [x] Add custom image component
+- [ ] Test image picker on physical iOS device //no physical device to test
+- [ ] Test image picker on physical Android device //no physical device to test
 - [ ] Improve UI
 - [ ] Add animation
