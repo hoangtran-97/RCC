@@ -25,6 +25,10 @@ const ASYNC_STORAGE_LOCAL_CAT_LIST = 'localCatList';
 
 export const HomeView = () => {
   const [catData, setCatData] = useState<FakeCat[]>([]);
+
+  useEffect(() => {
+    getCatData();
+  }, []);
   const openImagePicker = () => {
     ImagePicker.openPicker({
       width: 800,
@@ -35,9 +39,6 @@ export const HomeView = () => {
     });
   };
 
-  useEffect(() => {
-    getCatData();
-  }, []);
   const getCatData = async () => {
     const fakeCatList = generateFakeCatArray();
     const localCatList = await getLocalCatListData();
@@ -84,8 +85,8 @@ export const HomeView = () => {
         );
       }
       getCatData();
-    } catch (e) {
-      // saving error
+    } catch (error) {
+      //silent catch
     }
   };
 
@@ -120,11 +121,11 @@ export const HomeView = () => {
         );
       }
       getCatData();
-    } catch (e) {
-      // saving error
+    } catch (error) {
+      //silent catch
     }
   };
-  const blackListCat = async (catId: string) => {
+  const addCatToBlackList = async (catId: string) => {
     try {
       const currentBlackListJSON = await AsyncStorage.getItem(
         ASYNC_STORAGE_CAT_BLACK_LIST,
@@ -146,8 +147,8 @@ export const HomeView = () => {
         );
       }
       getCatData();
-    } catch (e) {
-      // saving error
+    } catch (error) {
+      //silent catch
     }
     Toast.show({
       type: 'info',
@@ -164,7 +165,7 @@ export const HomeView = () => {
   };
 
   const onCardPress = (id: string) => {
-    blackListCat(id);
+    addCatToBlackList(id);
   };
 
   return (
@@ -194,8 +195,11 @@ export const HomeView = () => {
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: {
+    flex: 1,
+  },
   title: {
     fontSize: 32,
     fontWeight: '700',
